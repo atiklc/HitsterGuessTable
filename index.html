@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Standings</title>
+  <title>Live Standings</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     html, body {
@@ -13,7 +13,7 @@
       background: #f0f0f0;
     }
     .container {
-      max-width: 1200px;
+      max-width: 900px;
       margin: 0 auto;
       min-height: 100vh;
       display: flex;
@@ -25,34 +25,66 @@
       color: #fff;
       font-size: 16px;
       font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .sub {
+      font-size: 11px;
+      font-weight: 400;
+      opacity: 0.8;
     }
     main {
       flex: 1;
-      background: #fff;
+      background: #ffffff;
       border-left: 1px solid #ddd;
       border-right: 1px solid #ddd;
       border-bottom: 1px solid #ddd;
     }
     iframe {
       width: 100%;
-      height: 1000%;
+      height: 85vh;
       border: 0;
+      background: #ffffff;
+    }
+    @media (max-width: 768px) {
+      iframe {
+        height: 80vh;
+      }
     }
   </style>
+  <script>
+    const REFRESH_MS = 30000; // 30 seconds
+
+    function setupAutoRefresh() {
+      const f = document.getElementById("standingsFrame");
+      if (!f) return;
+      const base = f.src;
+      f.setAttribute("data-base-src", base);
+
+      setInterval(() => {
+        const url = f.getAttribute("data-base-src") || base;
+        const sep = url.includes("?") ? "&" : "?";
+        f.src = url + sep + "t=" + Date.now();
+      }, REFRESH_MS);
+    }
+
+    window.addEventListener("load", setupAutoRefresh);
+  </script>
 </head>
 <body>
   <div class="container">
     <header>
-      Live Standings
+      <span>Live Standings</span>
+      <span class="sub">auto-refresh every 30 seconds</span>
     </header>
     <main>
-     <iframe 
-       width="630" 
-       height="1250" 
-       frameborder="0" 
-       scrolling="no" 
-       src="https://1drv.ms/x/c/39b4570b268b55f9/IQQWtm5FbUEnS7a0aTiKHGDkAb32xAN33uv3vUa-nfL1bs8?wdAllowInteractivity=False&ActiveCell='Standings'!A5&Item='Standings'!A5%3AC13&wdHideGridlines=True&wdInConfigurator=True&wdInConfigurator=True">
-     </iframe>
+      <iframe
+        id="standingsFrame"
+        src="https://1drv.ms/x/c/39b4570b268b55f9/IQQWtm5FbUEnS7a0aTiKHGDkAb32xAN33uv3vUa-nfL1bs8?wdAllowInteractivity=False&ActiveCell='Standings'!A5&Item='Standings'!A5%3AC13&wdHideGridlines=True&wdInConfigurator=True&wdInConfigurator=True"
+        title="Standings table"
+        loading="lazy">
+      </iframe>
     </main>
   </div>
 </body>
